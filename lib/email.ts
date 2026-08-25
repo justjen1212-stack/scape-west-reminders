@@ -96,7 +96,7 @@ export async function sendWaxReminderEmail({
   `;
 
   return resend.emails.send({
-    from: 'Scape West <hello@scape-west.co.uk>',
+    from: 'Scape West <onboarding@resend.dev>',
     to,
     subject: 'Time to care for your furniture ✨',
     html,
@@ -174,7 +174,7 @@ export async function sendOwnerApprovalEmail({
   `;
 
   return resend.emails.send({
-    from: 'Scape West <hello@scape-west.co.uk>',
+    from: 'Scape West <onboarding@resend.dev>',
     to: process.env.OWNER_EMAIL!,
     subject: `Action needed: ${customers.length} wax reminder${customers.length > 1 ? 's' : ''} ready to send`,
     html,
