@@ -17,7 +17,13 @@ export async function initDb() {
       purchase_date TIMESTAMP NOT NULL,
       email_sent BOOLEAN DEFAULT FALSE,
       email_sent_at TIMESTAMP,
+      approval_token VARCHAR(255),
+      approval_sent_at TIMESTAMP,
       created_at TIMESTAMP DEFAULT NOW()
     )
   `;
+
+  // Add approval columns if they don't exist yet (for existing tables)
+  await sql`ALTER TABLE wax_reminders ADD COLUMN IF NOT EXISTS approval_token VARCHAR(255)`;
+  await sql`ALTER TABLE wax_reminders ADD COLUMN IF NOT EXISTS approval_sent_at TIMESTAMP`;
 }

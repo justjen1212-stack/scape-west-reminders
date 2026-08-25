@@ -102,3 +102,81 @@ export async function sendWaxReminderEmail({
     html,
   });
 }
+
+export async function sendOwnerApprovalEmail({
+  customers,
+  token,
+}: {
+  customers: { customerName: string; customerEmail: string; productNames: string }[];
+  token: string;
+}) {
+  const approveUrl = `${process.env.NEXT_PUBLIC_BASE_URL}/api/approve?token=${token}`;
+
+  const rows = customers
+    .map(
+      (c) => `
+      <tr>
+        <td style="padding:10px 12px;color:#5c3d1e;font-size:14px;border-bottom:1px solid #f0e8d8;">${c.customerName}</td>
+        <td style="padding:10px 12px;color:#5c3d1e;font-size:14px;border-bottom:1px solid #f0e8d8;">${c.customerEmail}</td>
+        <td style="padding:10px 12px;color:#5c3d1e;font-size:14px;border-bottom:1px solid #f0e8d8;">${c.productNames}</td>
+      </tr>`
+    )
+    .join('');
+
+  const html = `
+    <!DOCTYPE html>
+    <html>
+      <head><meta charset="utf-8" /><title>Wax Reminder Approval</title></head>
+      <body style="margin:0;padding:0;background-color:#f9f6f1;font-family:Georgia,serif;">
+        <table width="100%" cellpadding="0" cellspacing="0" style="background-color:#f9f6f1;padding:40px 0;">
+          <tr>
+            <td align="center">
+              <table width="620" cellpadding="0" cellspacing="0" style="background-color:#ffffff;border-radius:8px;overflow:hidden;box-shadow:0 2px 8px rgba(0,0,0,0.06);">
+
+                <tr>
+                  <td style="background-color:#2c1a0e;padding:28px 40px;text-align:center;">
+                    <h1 style="color:#f5e6c8;margin:0;font-size:20px;letter-spacing:2px;text-transform:uppercase;">Scape West</h1>
+                    <p style="color:#c9a87a;margin:6px 0 0;font-size:13px;letter-spacing:1px;">Wax Reminder Approval</p>
+                  </td>
+                </tr>
+
+                <tr>
+                  <td style="padding:32px 40px;">
+                    <p style="color:#5c3d1e;font-size:16px;line-height:1.6;margin:0 0 8px;">
+                      The following <strong>${customers.length} customer${customers.length > 1 ? 's' : ''}</strong> purchased furniture 90 days ago and are due to receive a wax care reminder:
+                    </p>
+
+                    <table width="100%" cellpadding="0" cellspacing="0" style="margin:24px 0;border:1px solid #e8ddd0;border-radius:6px;overflow:hidden;">
+                      <tr style="background-color:#f0e8d8;">
+                        <th style="padding:10px 12px;text-align:left;font-size:12px;color:#8b7355;text-transform:uppercase;letter-spacing:1px;">Name</th>
+                        <th style="padding:10px 12px;text-align:left;font-size:12px;color:#8b7355;text-transform:uppercase;letter-spacing:1px;">Email</th>
+                        <th style="padding:10px 12px;text-align:left;font-size:12px;color:#8b7355;text-transform:uppercase;letter-spacing:1px;">Product</th>
+                      </tr>
+                      ${rows}
+                    </table>
+
+                    <p style="color:#5c3d1e;font-size:15px;margin:0 0 24px;">Click below to approve and send the wax reminder emails to all of them:</p>
+
+                    <a href="${approveUrl}" style="display:inline-block;background-color:#2c1a0e;color:#f5e6c8;text-decoration:none;padding:14px 32px;border-radius:6px;font-size:15px;letter-spacing:1px;">
+                      Approve &amp; Send Emails
+                    </a>
+
+                    <p style="color:#8b7355;font-size:13px;margin:24px 0 0;">If you don't want to send these emails, just ignore this message.</p>
+                  </td>
+                </tr>
+
+              </table>
+            </td>
+          </tr>
+        </table>
+      </body>
+    </html>
+  `;
+
+  return resend.emails.send({
+    from: 'Scape West <hello@scape-west.co.uk>',
+    to: process.env.OWNER_EMAIL!,
+    subject: `Action needed: ${customers.length} wax reminder${customers.length > 1 ? 's' : ''} ready to send`,
+    html,
+  });
+}
