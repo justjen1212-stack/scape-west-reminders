@@ -57,6 +57,11 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: 'No customer email' }, { status: 400 });
     }
 
+    // Only process completed orders
+    if (order.status !== 'completed') {
+      return NextResponse.json({ success: true, skipped: `order status is ${order.status}` });
+    }
+
     // Check if any product in the order is furniture
     const productIds = (order.line_items ?? []).map((item: { product_id: number }) => item.product_id);
     const { found, names } = await hasFurnitureProduct(productIds);
