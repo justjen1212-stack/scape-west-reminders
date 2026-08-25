@@ -1,6 +1,14 @@
-import { Resend } from 'resend';
+import nodemailer from 'nodemailer';
 
-const resend = new Resend(process.env.RESEND_API_KEY!);
+function getTransporter() {
+  return nodemailer.createTransport({
+    service: 'gmail',
+    auth: {
+      user: process.env.GMAIL_USER,
+      pass: process.env.GMAIL_APP_PASSWORD,
+    },
+  });
+}
 
 export async function sendWaxReminderEmail({
   to,
@@ -95,8 +103,8 @@ export async function sendWaxReminderEmail({
     </html>
   `;
 
-  return resend.emails.send({
-    from: 'Scape West <onboarding@resend.dev>',
+  return getTransporter().sendMail({
+    from: `"Scape West" <${process.env.GMAIL_USER}>`,
     to,
     subject: 'Time to care for your furniture ✨',
     html,
@@ -173,8 +181,8 @@ export async function sendOwnerApprovalEmail({
     </html>
   `;
 
-  return resend.emails.send({
-    from: 'Scape West <onboarding@resend.dev>',
+  return getTransporter().sendMail({
+    from: `"Scape West" <${process.env.GMAIL_USER}>`,
     to: process.env.OWNER_EMAIL!,
     subject: `Action needed: ${customers.length} wax reminder${customers.length > 1 ? 's' : ''} ready to send`,
     html,
