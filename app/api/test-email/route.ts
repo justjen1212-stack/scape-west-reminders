@@ -1,21 +1,11 @@
 import { NextResponse } from 'next/server';
-import { sendOwnerApprovalEmail } from '@/lib/email';
+import { sendWaxReminderEmail } from '@/lib/email';
 
 export async function GET() {
-  await sendOwnerApprovalEmail({
-    customers: [
-      {
-        customerName: 'Sarah Johnson',
-        customerEmail: 'sarah.johnson@example.com',
-        productNames: 'Solid Oak Dining Table',
-      },
-      {
-        customerName: 'James Carter',
-        customerEmail: 'james.carter@example.com',
-        productNames: 'Walnut Bedside Cabinet',
-      },
-    ],
-    token: 'test-token-do-not-click',
+  await sendWaxReminderEmail({
+    to: 'sebineagu6@gmail.com',
+    customerName: 'Sarah Johnson',
+    productNames: 'Solid Oak Dining Table',
   });
 
   return NextResponse.json({ sent: true });
