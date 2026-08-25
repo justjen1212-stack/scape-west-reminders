@@ -1,5 +1,5 @@
 import nodemailer from 'nodemailer';
-import { getEmailTemplate } from '@/lib/db';
+import { getEmailTemplate, type EmailTemplate } from '@/lib/db';
 
 function getTransporter() {
   return nodemailer.createTransport({
@@ -20,15 +20,7 @@ function buildCustomerEmailHtml({
 }: {
   firstName: string;
   intro: string;
-  t: {
-    main_paragraph: string;
-    step1: string;
-    step2: string;
-    step3: string;
-    step4: string;
-    recommendation: string;
-    closing: string;
-  };
+  t: EmailTemplate;
 }) {
   return `
     <!DOCTYPE html>

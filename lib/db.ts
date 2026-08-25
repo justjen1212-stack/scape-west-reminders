@@ -49,10 +49,23 @@ export async function initDb() {
   `;
 }
 
-export async function getEmailTemplate() {
+export interface EmailTemplate {
+  subject: string;
+  intro: string;
+  main_paragraph: string;
+  step1: string;
+  step2: string;
+  step3: string;
+  step4: string;
+  recommendation: string;
+  closing: string;
+  [key: string]: unknown;
+}
+
+export async function getEmailTemplate(): Promise<EmailTemplate> {
   const sql = getDb();
   const rows = await sql`SELECT * FROM email_template WHERE id = 1`;
-  return rows[0];
+  return rows[0] as EmailTemplate;
 }
 
 export async function saveEmailTemplate(data: {
