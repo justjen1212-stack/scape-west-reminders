@@ -1,4 +1,5 @@
 import nodemailer from 'nodemailer';
+import { getEmailTemplate } from '@/lib/db';
 
 function getTransporter() {
   return nodemailer.createTransport({
@@ -20,6 +21,9 @@ export async function sendWaxReminderEmail({
   productNames: string;
 }) {
   const firstName = customerName.split(' ')[0];
+  const t = await getEmailTemplate();
+
+  const intro = t.intro.replace('[product]', productNames);
 
   const html = `
     <!DOCTYPE html>
@@ -48,11 +52,11 @@ export async function sendWaxReminderEmail({
                     <p style="color:#5c3d1e;font-size:16px;line-height:1.6;margin:0 0 16px;">Hi ${firstName},</p>
 
                     <p style="color:#5c3d1e;font-size:16px;line-height:1.6;margin:0 0 16px;">
-                      It's been 3 months since your <strong>${productNames}</strong> arrived — and that's the perfect time to give it a little love.
+                      ${intro}
                     </p>
 
                     <p style="color:#5c3d1e;font-size:16px;line-height:1.6;margin:0 0 24px;">
-                      Applying a fresh coat of furniture wax every few months keeps the wood nourished, protected from moisture, and looking as beautiful as the day it arrived.
+                      ${t.main_paragraph}
                     </p>
 
                     <!-- How to wax box -->
@@ -61,21 +65,21 @@ export async function sendWaxReminderEmail({
                         <td style="padding:20px 24px;">
                           <p style="color:#2c1a0e;font-size:15px;font-weight:bold;margin:0 0 12px;text-transform:uppercase;letter-spacing:1px;">How to apply</p>
                           <ol style="color:#5c3d1e;font-size:15px;line-height:1.8;margin:0;padding-left:20px;">
-                            <li>Dust the surface with a clean, dry cloth</li>
-                            <li>Apply a small amount of furniture wax with a soft cloth in circular motions</li>
-                            <li>Leave for 5–10 minutes to absorb</li>
-                            <li>Buff to a gentle shine with a clean cloth</li>
+                            <li>${t.step1}</li>
+                            <li>${t.step2}</li>
+                            <li>${t.step3}</li>
+                            <li>${t.step4}</li>
                           </ol>
                         </td>
                       </tr>
                     </table>
 
                     <p style="color:#5c3d1e;font-size:16px;line-height:1.6;margin:0 0 16px;">
-                      We recommend a good quality beeswax or natural furniture wax — avoid silicone-based products as they can build up over time.
+                      ${t.recommendation}
                     </p>
 
                     <p style="color:#5c3d1e;font-size:16px;line-height:1.6;margin:0 0 32px;">
-                      If you have any questions about caring for your piece, just reply to this email — we're always happy to help.
+                      ${t.closing}
                     </p>
 
                     <p style="color:#5c3d1e;font-size:16px;line-height:1.6;margin:0;">
@@ -106,7 +110,7 @@ export async function sendWaxReminderEmail({
   return getTransporter().sendMail({
     from: `"Scape West" <${process.env.GMAIL_USER}>`,
     to,
-    subject: 'Time to care for your furniture ✨',
+    subject: t.subject,
     html,
   });
 }
