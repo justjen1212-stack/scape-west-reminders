@@ -177,13 +177,24 @@ export async function sendOwnerApprovalEmail({
                       ${emailPreviewHtml}
                     </div>
 
-                    <p style="color:#5c3d1e;font-size:15px;margin:0 0 24px;">Happy with it? Click below to send to all ${customers.length} customer${customers.length > 1 ? 's' : ''}:</p>
+                    <p style="color:#5c3d1e;font-size:15px;margin:0 0 24px;">Happy with it? Click below to send to all ${customers.length} customer${customers.length > 1 ? 's' : ''}. Want to tweak the wording first? Use the edit button.</p>
 
-                    <a href="${approveUrl}" style="display:inline-block;background-color:#2c1a0e;color:#f5e6c8;text-decoration:none;padding:14px 32px;border-radius:6px;font-size:15px;letter-spacing:1px;">
-                      Approve &amp; Send Emails
-                    </a>
+                    <table cellpadding="0" cellspacing="0">
+                      <tr>
+                        <td style="padding-right:12px;">
+                          <a href="${approveUrl}" style="display:inline-block;background-color:#2c1a0e;color:#f5e6c8;text-decoration:none;padding:14px 32px;border-radius:6px;font-size:15px;letter-spacing:1px;">
+                            Approve &amp; Send Emails
+                          </a>
+                        </td>
+                        <td>
+                          <a href="${process.env.NEXT_PUBLIC_BASE_URL}/admin" style="display:inline-block;background-color:#ffffff;color:#2c1a0e;text-decoration:none;padding:14px 32px;border-radius:6px;font-size:15px;letter-spacing:1px;border:2px solid #2c1a0e;">
+                            Edit Email
+                          </a>
+                        </td>
+                      </tr>
+                    </table>
 
-                    <p style="color:#8b7355;font-size:13px;margin:24px 0 0;">If you don't want to send these emails, just ignore this message.</p>
+                    <p style="color:#8b7355;font-size:13px;margin:24px 0 0;">If you edit the email, the approval link above will send the updated version. Ignore this message to skip sending.</p>
                   </td>
                 </tr>
 
